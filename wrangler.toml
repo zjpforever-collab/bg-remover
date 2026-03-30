@@ -1,0 +1,17 @@
+name = "bg-remover-api"
+main = "workers/api.ts"
+compatibility_date = "2024-01-01"
+
+[vars]
+# Remove.bg API key will be set via wrangler secret
+
+[build]
+command = ""
+
+[env.production]
+vars = {}
+
+# Uncomment to enable KV storage for rate limiting (optional)
+# [[kv_namespaces]]
+# binding = "USAGE_CACHE"
+# id = "your-kv-namespace-id"
