@@ -1,7 +1,7 @@
 import type { ProcessResult, ApiResponse } from '../types';
 
 // Change this to your Workers URL after deployment
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://bgremove.zjpforever.workers.dev';
 
 export async function processImageApi(file: File): Promise<ProcessResult> {
   try {
