@@ -6,13 +6,14 @@ import UploadArea from '@/components/UploadArea';
 import ResultView from '@/components/ResultView';
 import ProcessingModal from '@/components/ProcessingModal';
 import UsageLimit from '@/components/UsageLimit';
+import EmailRegisterModal from '@/components/EmailRegisterModal';
 import { useImageProcessor } from '@/hooks/useImageProcessor';
 import type { ImageFile } from '@/types';
 
 export default function Home() {
   const [originalImage, setOriginalImage] = useState<ImageFile | null>(null);
   const [processedImage, setProcessedImage] = useState<string | null>(null);
-  const { processImage, isProcessing, error, remainingUses, decrementUsage } = useImageProcessor();
+  const { processImage, isProcessing, error, remainingUses, decrementUsage, isEmailRequired, setEmailRegistered } = useImageProcessor();
 
   const handleImageUpload = useCallback((file: ImageFile) => {
     setOriginalImage(file);
@@ -69,6 +70,11 @@ export default function Home() {
       </main>
 
       <ProcessingModal isOpen={isProcessing} />
+      
+      <EmailRegisterModal 
+        isOpen={isEmailRequired} 
+        onRegister={setEmailRegistered} 
+      />
 
       <footer className="py-6 text-center text-gray-400 text-sm">
         <p>Powered by Remove.bg API</p>

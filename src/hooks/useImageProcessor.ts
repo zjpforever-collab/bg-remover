@@ -3,7 +3,7 @@ import { processImageApi } from '../utils/api';
 import type { ProcessResult } from '../types';
 
 const STORAGE_KEY = 'bg-remover-usage';
-const DAILY_LIMIT = 5;
+const STORAGE_EMAIL_KEY = 'bg-remover-email';
 
 interface UseImageProcessorReturn {
   processImage: (file: File) => Promise<string | null>;
@@ -12,56 +12,51 @@ interface UseImageProcessorReturn {
   remainingUses: number;
   decrementUsage: () => void;
   resetUsage: () => void;
+  isEmailRequired: boolean;
+  setEmailRegistered: (email: string) => void;
 }
 
 export function useImageProcessor(): UseImageProcessorReturn {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [remainingUses, setRemainingUses] = useState(DAILY_LIMIT);
+  const [remainingUses, setRemainingUses] = useState(1);
+  const [isEmailRequired, setIsEmailRequired] = useState(false);
 
-  // Load usage from localStorage on mount
+  // Check if email is registered on mount
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const { count, date } = JSON.parse(stored);
-        const today = new Date().toDateString();
-        
-        if (date === today) {
-          setRemainingUses(Math.max(0, DAILY_LIMIT - count));
-        } else {
-          // Reset for new day
-          localStorage.setItem(STORAGE_KEY, JSON.stringify({ count: 0, date: today }));
-          setRemainingUses(DAILY_LIMIT);
-        }
-      } catch {
-        setRemainingUses(DAILY_LIMIT);
+    const email = localStorage.getItem(STORAGE_EMAIL_KEY);
+    if (!email) {
+      // Check if free use has been used
+      const freeUsed = localStorage.getItem(STORAGE_KEY);
+      if (freeUsed === 'true') {
+        setIsEmailRequired(true);
       }
     }
   }, []);
 
   const decrementUsage = useCallback(() => {
-    setRemainingUses(prev => {
-      const newCount = Math.max(0, prev - 1);
-      const today = new Date().toDateString();
-      const stored = localStorage.getItem(STORAGE_KEY);
-      let count = 1;
-      
-      if (stored) {
-        const { count: storedCount, date } = JSON.parse(stored);
-        if (date === today) {
-          count = storedCount + 1;
-        }
-      }
-      
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ count, date: today }));
-      return newCount;
-    });
+    // Mark that free use has been used
+    localStorage.setItem(STORAGE_KEY, 'true');
+    
+    // If no email registered, require it for next use
+    const email = localStorage.getItem(STORAGE_EMAIL_KEY);
+    if (!email) {
+      setIsEmailRequired(true);
+      setRemainingUses(0);
+    }
+  }, []);
+
+  const setEmailRegistered = useCallback((email: string) => {
+    localStorage.setItem(STORAGE_EMAIL_KEY, email);
+    setIsEmailRequired(false);
+    setRemainingUses(999); // Unlimited after email registered
   }, []);
 
   const resetUsage = useCallback(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ count: 0, date: new Date().toDateString() }));
-    setRemainingUses(DAILY_LIMIT);
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(STORAGE_EMAIL_KEY);
+    setRemainingUses(1);
+    setIsEmailRequired(false);
   }, []);
 
   const processImage = useCallback(async (file: File): Promise<string | null> => {
@@ -93,5 +88,7 @@ export function useImageProcessor(): UseImageProcessorReturn {
     remainingUses,
     decrementUsage,
     resetUsage,
+    isEmailRequired,
+    setEmailRegistered,
   };
 }
