@@ -99,13 +99,17 @@ async function handleRemoveBg(request: Request, env: Env): Promise<Response> {
     // Convert File to ArrayBuffer for the Remove.bg API
     const imageBuffer = await imageFile.arrayBuffer();
 
-    // Call Remove.bg API
+    // Call Remove.bg API with proper FormData
+    const removeBgFormData = new FormData();
+    removeBgFormData.append('image_file', new Blob([imageBuffer], { type: imageFile.type }), imageFile.name);
+    removeBgFormData.append('size', 'auto');
+
     const removeBgResponse = await fetch('https://api.remove.bg/v1.0/removebg', {
       method: 'POST',
       headers: {
         'X-Api-Key': apiKey,
       },
-      body: new Blob([imageBuffer], { type: imageFile.type }),
+      body: removeBgFormData,
     });
 
     if (!removeBgResponse.ok) {
