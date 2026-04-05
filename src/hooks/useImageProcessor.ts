@@ -19,7 +19,7 @@ interface UseImageProcessorReturn {
 export function useImageProcessor(): UseImageProcessorReturn {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [remainingUses, setRemainingUses] = useState(1);
+  const [remainingUses, setRemainingUses] = useState(999);
   const [isEmailRequired, setIsEmailRequired] = useState(false);
 
   // Check if email is registered on mount
