@@ -1,6 +1,7 @@
 'use client'
 
 import { SparklesIcon, PhotoIcon } from './Icons';
+import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 
 function Header() {
   return (
@@ -17,9 +18,23 @@ function Header() {
             </div>
           </div>
           
-          <div className="flex items-center gap-2 text-dark-400">
-            <PhotoIcon className="w-5 h-5" />
-            <span className="text-sm hidden sm:inline">Remove backgrounds instantly</span>
+          <div className="flex items-center gap-4">
+            <div className="hidden sm:flex items-center gap-2 text-dark-400">
+              <PhotoIcon className="w-5 h-5" />
+              <span className="text-sm">Remove backgrounds instantly</span>
+            </div>
+            
+            <SignedOut>
+              <SignInButton mode="modal">
+                <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors">
+                  Sign In
+                </button>
+              </SignInButton>
+            </SignedOut>
+            
+            <SignedIn>
+              <UserButton afterSignOutUrl="/" />
+            </SignedIn>
           </div>
         </div>
       </div>

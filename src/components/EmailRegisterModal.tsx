@@ -21,7 +21,7 @@ function EmailRegisterModal({ isOpen, onRegister }: EmailRegisterModalProps) {
     // Simulate a brief delay for better UX
     await new Promise(resolve => setTimeout(resolve, 500));
     onRegister(email);
-    setIsSubmitting(false);
+    // Don't set isSubmitting false here - we're closing the modal anyway
   };
 
   return (
