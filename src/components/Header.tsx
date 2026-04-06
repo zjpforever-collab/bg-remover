@@ -1,30 +1,8 @@
 'use client'
 
 import { SparklesIcon, PhotoIcon } from './Icons';
-import { useState, useEffect } from 'react';
 
-function Header({ onLoginClick }: { onLoginClick?: () => void }) {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userEmail, setUserEmail] = useState('');
-
-  useEffect(() => {
-    const email = localStorage.getItem('user_email');
-    if (email) {
-      setIsLoggedIn(true);
-      setUserEmail(email);
-    }
-  }, []);
-
-  const handleLoginClick = () => {
-    if (isLoggedIn) {
-      localStorage.removeItem('user_email');
-      setIsLoggedIn(false);
-      setUserEmail('');
-    } else if (onLoginClick) {
-      onLoginClick();
-    }
-  };
-
+function Header() {
   return (
     <header className="glass sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4 max-w-4xl">
@@ -39,18 +17,9 @@ function Header({ onLoginClick }: { onLoginClick?: () => void }) {
             </div>
           </div>
           
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-2 text-gray-400">
-              <PhotoIcon className="w-5 h-5" />
-              <span className="text-sm">Remove backgrounds instantly</span>
-            </div>
-            
-            <button
-              onClick={handleLoginClick}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition-colors"
-            >
-              {isLoggedIn ? 'Logout' : 'Login'}
-            </button>
+          <div className="flex items-center gap-2 text-gray-400">
+            <PhotoIcon className="w-5 h-5" />
+            <span className="text-sm hidden sm:inline">Remove backgrounds instantly</span>
           </div>
         </div>
       </div>
