@@ -3,13 +3,11 @@
 import { SparklesIcon, PhotoIcon } from './Icons';
 import { useState, useEffect } from 'react';
 
-function Header() {
+function Header({ onLoginClick }: { onLoginClick?: () => void }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState('');
-  const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
-    // Check login status from localStorage
     const email = localStorage.getItem('user_email');
     if (email) {
       setIsLoggedIn(true);
@@ -19,20 +17,12 @@ function Header() {
 
   const handleLoginClick = () => {
     if (isLoggedIn) {
-      // Logout
       localStorage.removeItem('user_email');
       setIsLoggedIn(false);
       setUserEmail('');
-    } else {
-      setShowLoginModal(true);
+    } else if (onLoginClick) {
+      onLoginClick();
     }
-  };
-
-  const handleLogin = (email: string) => {
-    localStorage.setItem('user_email', email);
-    setIsLoggedIn(true);
-    setUserEmail(email);
-    setShowLoginModal(false);
   };
 
   return (
@@ -45,12 +35,12 @@ function Header() {
             </div>
             <div>
               <h1 className="text-xl font-bold text-white">BG Remover</h1>
-              <p className="text-xs text-dark-400">AI-Powered</p>
+              <p className="text-xs text-gray-400">AI-Powered</p>
             </div>
           </div>
           
           <div className="flex items-center gap-4">
-            <div className="hidden sm:flex items-center gap-2 text-dark-400">
+            <div className="hidden sm:flex items-center gap-2 text-gray-400">
               <PhotoIcon className="w-5 h-5" />
               <span className="text-sm">Remove backgrounds instantly</span>
             </div>
@@ -64,44 +54,6 @@ function Header() {
           </div>
         </div>
       </div>
-
-      {/* Simple Login Modal */}
-      {showLoginModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-gray-800 rounded-xl p-6 w-full max-w-md mx-4">
-            <h2 className="text-xl font-bold text-white mb-4">Login</h2>
-            <p className="text-gray-400 mb-4">Enter your email to continue</p>
-            <form onSubmit={(e) => {
-              e.preventDefault();
-              const email = (e.target as HTMLFormElement).email.value;
-              if (email) handleLogin(email);
-            }}>
-              <input
-                type="email"
-                name="email"
-                placeholder="your@email.com"
-                required
-                className="w-full px-4 py-3 bg-gray-700 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none mb-4"
-              />
-              <div className="flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowLoginModal(false)}
-                  className="flex-1 px-4 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  Login
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </header>
   );
 }
